@@ -1,4 +1,5 @@
 from pysm import State, StateMachine, Event
+import time
 
 foo = True
 
@@ -141,5 +142,21 @@ def basic_test():
     assert hsm.leaf_state.name == 's211'
 
 
+def speed_test():
+    hsm = CanonicalHsm()
+    assert hsm.leaf_state.name == 's11'
+    num_cycles = 1E3
+    start_time = time.time()
+    for idx in range(int(num_cycles)):
+        hsm.dispatch(Event('e'))
+        assert hsm.leaf_state.name == 's211'
+        hsm.dispatch(Event('f'))
+        assert hsm.leaf_state.name == 's11'
+    stop_time = time.time()
+    duration_ms = (stop_time - start_time) * 1E3
+    print(f'Executed {num_cycles} cycles in {duration_ms} ms')
+
+
 if __name__ == '__main__':
     basic_test()
+    speed_test()
